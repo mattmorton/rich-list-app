@@ -33,9 +33,28 @@ Order and currency don't change content only display. If country or search selec
 
 Initial filter state set on page load, and clear filters button to reset.
 
+## Notes
+- sort button changes the current filtered list sort direction (alphabetically, numerically).
+- networth parsed with toLocaleString() to improve readability of long numbers.
+- styling with bootstrap, responsive on mobile browsers (filters change from 2 columns to 1 column).
+
 ## Running
 
 ### Angular CLI
+
+Use the angular CLI to run the application locally.
+
+```git clone https://github.com/mattmorton/rich-list-app.git```
+
+```npm install```
+
+```ng serve```
+
+navigate to localhost:4200 to see the application.
+
+### Deployment
+
+A basic node server can serve the angular build files.
 
 ```git clone https://github.com/mattmorton/rich-list-app.git```
 
@@ -43,4 +62,5 @@ Initial filter state set on page load, and clear filters button to reset.
 
 ```npm start```
 
-navigate to localhost:4200 to see the application.
+On deploy to master branch, heroku integration installs dependencies, builds the application, and starts the server.
+The deployed version can be viewed at https://rich-list-app.herokuapp.com/

@@ -145,7 +145,6 @@ export class RichListComponent implements OnInit {
   }
 
   setDisplayItemsByOrder() {
-    console.log(this.selectedOrder)
     this.displayList = _.orderBy(this.displayList, [_.lowerCase(this.selectedOrder)], ['asc']);
   }
 

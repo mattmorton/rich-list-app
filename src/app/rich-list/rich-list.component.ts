@@ -40,6 +40,7 @@ export class RichListComponent implements OnInit {
   public selectedCountry: string;
   public selectedOrder: string;
   public selectedCurrency: string;
+  public sortOrder: boolean;
 
   constructor(
     public dataService: DataService,
@@ -59,6 +60,9 @@ export class RichListComponent implements OnInit {
     this.selectedCountry = 'Show All';
     this.selectedOrder = 'Rank';
     this.selectedCurrency = _.find(this.currencySelectionOptions, ['prefix', 'USD']);
+    if (this.sortOrder !== true) {
+      this.setDisplayItemsByOrderDirection();
+    }
   }
 
   buildFilterForm() {
@@ -132,17 +136,22 @@ export class RichListComponent implements OnInit {
 
   setDisplayItemsByCountryFilter() {
     if (this.selectedCountry === 'Show All') {
-      return this.displayList = this.originalList;
+      this.displayList = this.originalList;
+      this.setDisplayItemsByOrder();
+      return;
     }
     this.displayList = this.originalList.filter(person => _.lowerCase(person.country) === _.lowerCase(this.selectedCountry));
+    this.setDisplayItemsByOrder();
   }
 
   setDisplayItemsByOrder() {
+    console.log(this.selectedOrder)
     this.displayList = _.orderBy(this.displayList, [_.lowerCase(this.selectedOrder)], ['asc']);
   }
 
   setDisplayItemsByOrderDirection() {
     this.displayList = this.displayList.reverse();
+    this.sortOrder = !this.sortOrder;
   }
 
   clearFilters() {

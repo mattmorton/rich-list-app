@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { List } from '../list';
 import * as _ from 'lodash';
 import { DataService } from '../data.service';
@@ -12,7 +13,10 @@ export class RichListComponent implements OnInit {
 
   // list variables
   public originalList: any = [];
+  public filteredList: any = [];
   public displayList: any = [];
+  public searchList: any = [];
+  public filterForm: any;
 
   // static options and value
   public currencySelectionOptions: any = [
@@ -38,20 +42,32 @@ export class RichListComponent implements OnInit {
   public selectedCurrency: string;
 
   constructor(
-    public dataService: DataService
+    public dataService: DataService,
+    public fb: FormBuilder
   ) {
     this.setInitialFilterStates();
+    this.buildFilterForm();
   }
 
   ngOnInit() {
     this.getData();
+
   }
 
   setInitialFilterStates() {
     this.searchTerm = '';
     this.selectedCountry = 'Show All';
-    this.selectedOrder = '';
+    this.selectedOrder = 'Rank';
     this.selectedCurrency = _.find(this.currencySelectionOptions, ['prefix', 'USD']);
+  }
+
+  buildFilterForm() {
+    this.filterForm = this.fb.group({
+      search: [''],
+      country: [this.selectedCountry],
+      order: [this.selectedOrder],
+      currency: [this.selectedCurrency]
+    });
   }
 
   getData() {
@@ -89,28 +105,36 @@ export class RichListComponent implements OnInit {
     this.concatCountryOptionsToShowAll();
   }
 
-  setDisplayItemsBySearchTerm() {
-    console.log(this.searchTerm);
-    this.displayList.filter((person) => {
+  searchDisplayListBySearchTerm() {
+    this.filteredList.filter((person) => {
       return Object.keys(person).map((key) => {
         const valueToString = _.lowerCase(person[key].toString());
         if (valueToString.indexOf(_.lowerCase(this.searchTerm)) > -1) {
-          console.log('match found!', valueToString);
-          console.log(person);
-          return person;
+          this.searchList.push(person);
         }
-        // console.log(valueToString)
-        // console.log(person[key]);
-        // return person.key.indexOf(this.searchTerm) > -1;
       });
     });
+  }
+
+  async setDisplayListToSearchList() {
+    if (this.searchTerm === '') {
+      this.displayList = this.filteredList;
+      this.filteredList = [];
+      return;
+    }
+    if (this.filteredList.length === 0) {
+      this.filteredList = this.displayList;
+    }
+    this.searchList = [];
+    await this.searchDisplayListBySearchTerm();
+    this.displayList = this.searchList;
   }
 
   setDisplayItemsByCountryFilter() {
     if (this.selectedCountry === 'Show All') {
       return this.displayList = this.originalList;
     }
-    this.displayList = this.displayList.filter(person => _.lowerCase(person.country) === _.lowerCase(this.selectedCountry));
+    this.displayList = this.originalList.filter(person => _.lowerCase(person.country) === _.lowerCase(this.selectedCountry));
   }
 
   setDisplayItemsByOrder() {
@@ -124,6 +148,10 @@ export class RichListComponent implements OnInit {
   clearFilters() {
     this.setInitialFilterStates();
     this.displayList = this.originalList;
+  }
+
+  renderRecordsFound() {
+    return this.displayList.length > 0;
   }
 
 }

@@ -9,41 +9,42 @@
   </div>
 </div>
 <div class="container no-padding">
-  <form>
+  <form [formGroup]="filterForm">
     <div class="form-row">
       <div class="form-group col-md-6">
-        <label>Birthplace:</label>
-        <select class="form-control" [(ngModel)]="selectedCountry" name="selectedCountry" id="selectedCountry" (ngModelChange)="setDisplayItemsByCountryFilter()">
-          <option *ngFor="let country of countrySelectionOptions" [ngValue]="country">{{country}}</option>
-        </select>
+        <label>Search:</label>
+        <input class="form-control" [(ngModel)]="searchTerm" formControlName="search" (ngModelChange)="setDisplayListToSearchList()"
+        />
       </div>
       <div class="form-group col-md-6">
-        <label>Currency Converter:</label>
-        <select class="form-control" [(ngModel)]="selectedCurrency" name="selectedCurrency" id="selectedCurrency">
-          <option *ngFor="let currency of currencySelectionOptions" [ngValue]="currency">{{currency.prefix}}</option>
+        <label>Birthplace:</label>
+        <select class="form-control" [(ngModel)]="selectedCountry" formControlName="country" (ngModelChange)="setDisplayItemsByCountryFilter()">
+          <option *ngFor="let country of countrySelectionOptions" [ngValue]="country">{{country}}</option>
         </select>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group col-md-6">
-        <label>Order By:</label>
-        <select class="form-control" [(ngModel)]="selectedOrder" name="selectedOrder" id="selectedOrder" (ngModelChange)="setDisplayItemsByOrder()">
-          <option *ngFor="let order of orderSelectionOptions" [ngValue]="order">{{order}}</option>
+        <label>Currency Converter:</label>
+        <select class="form-control" [(ngModel)]="selectedCurrency" formControlName="currency">
+          <option *ngFor="let currency of currencySelectionOptions" [ngValue]="currency">{{currency.prefix}}</option>
         </select>
       </div>
       <div class="form-group col-md-6">
-        <label>Search:</label>
-        <input class="form-control" [(ngModel)]="searchTerm" name="searchTerm" id="searchTerm" (keyup)="setDisplayItemsBySearchTerm()" />
+        <label>Order By:</label>
+        <select class="form-control" [(ngModel)]="selectedOrder" formControlName="order" (ngModelChange)="setDisplayItemsByOrder()">
+          <option *ngFor="let order of orderSelectionOptions" [ngValue]="order">{{order}}</option>
+        </select>
       </div>
     </div>
     <button class="btn btn-primary" (click)="clearFilters()">Reset Filters</button>
   </form>
 </div>
 <div class="container">
-  <ul class="list-group">
-    <!-- <span (click)="setDisplayItemsByOrderDirection()">^</span> -->
-      <li class="list-group-item text-center" *ngFor="let person of displayList">
-        <app-rich-list-item [person]="person" [currency]="selectedCurrency"></app-rich-list-item>
-      </li>
+  <p *ngIf="!renderRecordsFound()">No records found.</p>
+  <ul class="list-group" *ngIf="renderRecordsFound()">
+    <li class="list-group-item text-center" *ngFor="let person of displayList">
+      <app-rich-list-item [person]="person" [currency]="selectedCurrency"></app-rich-list-item>
+    </li>
   </ul>
 </div>

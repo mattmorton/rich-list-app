@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RichListComponent } from '../app/rich-list/rich-list.component';
 
 @Component({
   selector: 'app-root',
